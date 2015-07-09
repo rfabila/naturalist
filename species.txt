@@ -1,0 +1,5 @@
+rectilinear_crossing_number
+empty_convex_pentagons
+empty_triangles
+empty_convex_quadrilaterals
+empty_convex_hexagons
