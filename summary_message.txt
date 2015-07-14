@@ -1,0 +1,14 @@
+
+Dear $NAME,
+
+Wow, today was a busy day. We found the following.
+
+$SUMMARY
+
+Cool, huh?
+
+I'll keep you posted.
+
+Yours Truly,
+
+PyDCG's Naturalist
