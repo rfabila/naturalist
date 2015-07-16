@@ -1,6 +1,7 @@
 #!/usr/bin/python
-
-import zoo
 import os
 
+os.chdir("/home/naturalist/naturalist")
+
+import zoo
 zoo.full_update(mail_summaries=True)

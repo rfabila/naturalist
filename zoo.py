@@ -5,12 +5,17 @@ import ConfigParser
 import smtplib
 from email.mime.text import MIMEText
 
+#Workaround while we fix the C/python interface.
+def f3(pts):
+    return PyDCG.holes.countEmptyTriangs(pts,speedup=False)
 
 eval_functions={'rectilinear_crossing_number':PyDCG.crossing.count_crossings,
-                'empty_convex_pentagons':PyDCG.holes.count_convex_rholes_maker(5),
-                'empty_triangles':PyDCG.holes.countEmptyTriangs,
-                'empty_convex_quadrilaterals':PyDCG.holes.count_convex_rholes_maker(4),
-                'empty_convex_hexagons':PyDCG.holes.count_convex_rholes_maker(6)}
+                'empty_convex_pentagons':PyDCG.holes.count_convex_rholes_maker(5,speedup=False),
+                'empty_triangles':f3,
+                'empty_convex_quadrilaterals':PyDCG.holes.count_convex_rholes_maker(4,speedup=False),
+                'empty_convex_hexagons':PyDCG.holes.count_convex_rholes_maker(6,speedup=False)}
+
+
 
 #Whether it is a minimize or maximizing species
 min_species={'rectilinear_crossing_number':True,
@@ -150,7 +155,7 @@ def compare_zoos(Z1,Z2):
 
 def clean_submissions(file_list):
     for name in file_list:
-        os.system("rm captured_specimens/"+name)
+        os.system("mv captured_specimens/"+name+" save_tmp/")
 
 def get_filelist():
     file_list=os.listdir("captured_specimens/")
@@ -159,6 +164,7 @@ def get_filelist():
 def get_new_sp_list(file_list):
     lst=[]
     for name in file_list:
+        print name
         file_sp=open("captured_specimens/"+name,"r")
         species_sp=pickle.load(file_sp)
         file_sp.close()
