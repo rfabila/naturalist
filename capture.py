@@ -1,3 +1,6 @@
-import zoo
+#!/usr/bin/python
 
-file_list=zoo.get_filelist()
+import zoo
+import os
+
+zoo.full_update(mail_summaries=True)
