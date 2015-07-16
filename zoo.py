@@ -28,12 +28,11 @@ def mail_all(D):
     U=get_users()
     for user in U:
         user_name=U[user]['user_name']
-        mail=U[user]['email']
+        email=U[user]['email']
         msg=create_msg(D,user_name=user_name,email=email)
-        if user_name=="Ruy":
-            s=smtplib.SMTP("monk")
-            s.sendmail("naturalist@monk.math.cinvestav.mx",email,msg.as_string())
-            s.quit()
+        s=smtplib.SMTP("monk")
+        s.sendmail("naturalist@monk.math.cinvestav.mx",email,msg.as_string())
+        s.quit()
             
         
 #User functions
@@ -72,14 +71,47 @@ def diffs_to_string(D):
     
 #suscriber functions
 def to_oswin(sp,species):
-    pass
+    
+    def write_oswin_file(pts,subdir):
+        n=len(pts)
+        dir_name="/toOswin/"
+        dir_name+=subdir
+        print dir_name
+        name=""
+        if n<100:
+            name="0"+str(n)
+        else:
+            name=str(n)
+        name=dir_name+name+"best.asc"
+        file_oswin=open(name,"w")
+        file_oswin.write(str(n)+"\n")
+        for p in pts:
+            file_oswin.write(str(p[0])+" "+str(p[1])+"\n")
+        file_oswin.close()
+        print name
+    
+    print species
+    if species=='rectilinear_crossing_number':
+        subdir=""
+    elif species=='empty_convex_pentagons':
+        subdir="5holes/"
+    elif species=='empty_triangles':
+        subdir="3holes/"
+    elif species=='empty_convex_quadrilaterals':
+        subdir="4holes/"
+    elif species=='empty_convex_hexagons':
+        subdir="6holes/"
+    
+    write_oswin_file(sp['pts'],subdir)
+    
 
 suscribers={2:to_oswin}
 
 def full_update(mail_summaries=False):
     Z1=get_zoo()
     Z2=get_zoo()
-    sp_list=get_new_sp_list()
+    file_list=get_filelist()
+    sp_list=get_new_sp_list(file_list)
     for (species,sp) in sp_list:
         update_sp(sp,species,Z2)
     D=compare_zoos(Z1,Z2)
@@ -93,6 +125,7 @@ def full_update(mail_summaries=False):
                 new_sets=True
         if new_sets:
             mail_all(D)
+    clean_submissions(file_list)
 
 def update_suscribers(Z1,Z2):
     species_list=get_species_list()
@@ -123,9 +156,8 @@ def get_filelist():
     file_list=os.listdir("captured_specimens/")
     return file_list
 
-def get_new_sp_list():
+def get_new_sp_list(file_list):
     lst=[]
-    file_list=get_filelist()
     for name in file_list:
         file_sp=open("captured_specimens/"+name,"r")
         species_sp=pickle.load(file_sp)
@@ -181,7 +213,7 @@ def new_specimen(sp,species,Z):
     if new_val<old_val and min_species[species]:
         Z[species][n]=sp
         sp['val']=new_val
-        save(species)
+        save(Z,species)
         print "New specimen of "+species+" found!"
         return True
     if new_val>old_val and not min_species[species]:
